@@ -1,5 +1,4 @@
 import numpy as np
-# import argparse
 
 """問題
 max:    X_1 + 2 * X_2
@@ -10,14 +9,50 @@ s.t.:   X_1 >= 0
         2* X_1 + X_2 <= 10
 """
 
+
 def main():
-    n = input("変数の数を入力してください: ")
-    m = input("制約条件の数を入力してください: ")
-    print(f"変数の数は{n}個, 制約条件の数は{m}個です")
-    print("係数行列を入力してください")
+    """limitation
+    1. 与えられる変数は非負制約を持つ
+    2. 制約条件は全て標準形で与えられる。すなわち Xi <= bi の形式で与えられるものとする
+    """
 
-    a = [int(input()) for i in range(n)]
+    # n = input("変数の数を入力してください: ")
+    # m = input("制約条件の数を入力してください: ")
+    # print(f"変数の数は{n}個, 制約条件の数は{m}個です")
+    # print("係数行列を入力してください")
+
+    # matrix = [input().split() for i in range(int(m) + 1)]
+    # print(matrix)
+
+    cost = np.array([1, 2])
+
+    # 規定行列を作る
+    basic_matrix = np.array([
+        [1, 0, 0],
+        [0, 1, 0],
+        [0, 0, 1],
+    ])
+
+    # 非規定行列を作る
+    nonbasic_matrix = np.array([
+        [1, 1],
+        [1, 3],
+        [2, 1],
+    ])
+
+    # 扱う行列
+    mx = np.array([
+        [1, 1, 1, 0, 0, 6],
+        [1, 3, 0, 1, 0, 12],
+        [2, 1, 0, 0, 1, 10],
+    ])
+
+    inv_b = np.linalg.inv(basic_matrix)
+    print(inv_b)
+
+    b = np.array([6, 12, 10])
+    print(np.dot(inv_b, b))
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
