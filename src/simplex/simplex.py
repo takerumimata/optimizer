@@ -1,4 +1,6 @@
 import numpy as np
+from numpy.core.records import array
+from numpy.matrixlib.defmatrix import matrix
 
 """問題
 max:    X_1 + 2 * X_2
@@ -10,17 +12,10 @@ s.t.:   X_1 >= 0
 """
 
 class Simplex:
-    def __init__(self) -> None:
-        self.matrix = np.array(
-            [
-                [1.0, 1.0, 1.0, 0.0, 0.0, 6.0],  # 制約関数① + スラック変数①
-                [1.0, 3.0, 0.0, 1.0, 0.0, 12.0],  # 制約関数② + スラック変数②
-                [2.0, 1.0, 0.0, 0.0, 1.0, 10.0],  # 制約関数③ + スラック変数③
-                [-1.0, -2.0, 0.0, 0.0, 0.0, 0.0],  # 目的関数（ここが全部負になったらおしまい）
-            ]
-        )
-        self.N_Col = len(self.matrix[0])    # 6
-        self.N_Row = len(self.matrix)   # 4
+    def __init__(self, matrix: np.array) -> None:
+        self.matrix = matrix
+        self.N_Col = len(self.matrix[0])
+        self.N_Row = len(self.matrix)
 
     def run(self):
         # select column 
@@ -45,7 +40,7 @@ class Simplex:
         print(f"answer is {ans}")
         print(self.matrix)
 
-    def _select_column(self, min):
+    def _select_column(self, min: float):
         """select_column
         ピボットする列の選択をする。被約費用を見ていって、最大のものを見つけて返す
 
@@ -53,6 +48,7 @@ class Simplex:
         ----------
         self: self
             インスタンス
+        min: float
 
         Return
         ----------
@@ -64,9 +60,6 @@ class Simplex:
         # min = 100
         column = 0
         for i in range(len(self.matrix[0]) - 1):    # 列の数だけループする
-            # if self.matrix[-1][i] < min: # and self.matrix[0][i] != 0:
-            #     min = self.matrix[-1][i]
-            #     column = i
             if self.matrix[self.N_Row - 1][i] >= min:
                     continue
             min, column = self.matrix[self.N_Row - 1][i], i
@@ -99,6 +92,15 @@ class Simplex:
     def _divide_pivot(self, column: int, row: int):
         """pivot
         ピボットで対象行の値を割っていく
+
+        Parameter
+        ----------
+        self: self
+            インスタンス
+        column: int
+            _select_colmunで求めたカラム
+        row: int
+            _select_rowで求めたピボット数
         """
         piv = self.matrix[row][column]
         for i in range(len(self.matrix[0])):
@@ -123,7 +125,16 @@ def main():
     1. 与えられる変数は非負制約を持つ
     2. 制約条件は全て標準形で与えられる。すなわち Xi <= bi の形式で与えられるものとする
     """
-    obj = Simplex()
+    _matrix = np.array(
+        [
+            [1.0, 1.0, 1.0, 0.0, 0.0, 6.0],  # 制約関数① + スラック変数①
+            [1.0, 3.0, 0.0, 1.0, 0.0, 12.0],  # 制約関数② + スラック変数②
+            [2.0, 1.0, 0.0, 0.0, 1.0, 10.0],  # 制約関数③ + スラック変数③
+            [-1.0, -2.0, 0.0, 0.0, 0.0, 0.0],  # 目的関数（ここが全部正になったらおしまい）
+        ]
+    )
+
+    obj = Simplex(matrix=_matrix)
     obj.run()
 
 
